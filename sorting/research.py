@@ -1,4 +1,4 @@
-
+import pathlib
 from abc import ABC, abstractmethod
 import json
 
@@ -8,6 +8,8 @@ from sorting.bubble_sort import generate_order_list, generate_reversed_list, gen
 ORDERED = 'ordered'
 RANDOM = 'random'
 REVERSED = 'reversed'
+
+BASE = pathlib.Path(__file__).parent.absolute() / 'temp_data'
 
 
 class SortingAlgorithm(ABC):
@@ -110,13 +112,15 @@ def simulate(algorithm: SortingAlgorithm, max_length: int) -> None:
 		algorithm.sort(random_list)
 		result[RANDOM][length] = algorithm.comparisons
 
-	filename = f'{algorithm.__class__.__name__}_{max_length}.json'
+
+	filename = BASE / f'{algorithm.__class__.__name__}_{max_length}.json'
+
 	with open(filename, 'w') as f:
 		json.dump(result, f, indent=4, sort_keys=True)
 
 
 if __name__ == '__main__':
-	length = 1000
+	length = 100
 
 	simulate(BubbleSort(), length)
 	simulate(InsertSort(), length)

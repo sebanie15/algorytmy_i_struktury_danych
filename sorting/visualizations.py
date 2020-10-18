@@ -4,7 +4,7 @@ from typing import List
 
 import plotly.graph_objects as go
 
-from sorting.research import ORDERED, RANDOM, REVERSED
+from sorting.research import ORDERED, RANDOM, REVERSED, BASE
 
 
 def show_algorithm_complexities(filename):
@@ -32,18 +32,24 @@ def show_algorithm_complexities_2(files: List, generate_type: str) -> None:
 	"""
 
 	figure = go.Figure()
+	is_error = False
 
 	for file in files:
-		with open(file, 'r') as f:
-			result = json.load(f)
+		try:
+			with open(file, 'r') as f:
+				result = json.load(f)
+		except FileNotFoundError as error:
+			is_error = True
+			print(f'{error}')
+		else:
+			domain = list(result[generate_type].keys())
+			figure.add_trace(go.Scatter(x=domain, y=list(result[generate_type].values()), mode='lines+markers', name=file))
 
-		domain = list(result[generate_type].keys())
-		figure.add_trace(go.Scatter(x=domain, y=list(result[generate_type].values()), mode='lines+markers', name=file))
-
-	figure.show()
+	if not is_error:
+		figure.show()
 
 
 if __name__ == '__main__':
 	# show_algorithm_complexities('BubbleSort_100.json')
 
-	show_algorithm_complexities_2(['BubbleSort_1000.json', 'InsertSort_1000.json'], REVERSED)
+	show_algorithm_complexities_2([str(BASE) + '/BubbleSort_100.json', str(BASE) + '/InsertSort_100.json'], REVERSED)
