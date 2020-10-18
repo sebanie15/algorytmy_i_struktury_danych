@@ -1,6 +1,7 @@
 import pathlib
 from abc import ABC, abstractmethod
 import json
+from typing import Dict
 
 from sorting.bubble_sort import generate_order_list, generate_reversed_list, generate_random_list
 
@@ -112,15 +113,18 @@ def simulate(algorithm: SortingAlgorithm, max_length: int) -> None:
 		algorithm.sort(random_list)
 		result[RANDOM][length] = algorithm.comparisons
 
-
 	filename = BASE / f'{algorithm.__class__.__name__}_{max_length}.json'
+	save_dict_to_json(filename, result)
 
+
+def save_dict_to_json(filename: str, dict: Dict) -> None:
+	# filename = BASE / f'{algorithm.__class__.__name__}_{max_length}.json'
 	with open(filename, 'w') as f:
-		json.dump(result, f, indent=4, sort_keys=True)
+		json.dump(dict, f, indent=4, sort_keys=True)
 
 
 if __name__ == '__main__':
-	length = 100
+	length = 10
 
 	simulate(BubbleSort(), length)
 	simulate(InsertSort(), length)

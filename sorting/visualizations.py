@@ -1,6 +1,7 @@
 
 import json
 from typing import List
+import os
 
 import plotly.graph_objects as go
 
@@ -34,22 +35,40 @@ def show_algorithm_complexities_2(files: List, generate_type: str) -> None:
 	figure = go.Figure()
 	is_error = False
 
-	for file in files:
-		try:
-			with open(file, 'r') as f:
-				result = json.load(f)
-		except FileNotFoundError as error:
-			is_error = True
-			print(f'{error}')
-		else:
-			domain = list(result[generate_type].keys())
-			figure.add_trace(go.Scatter(x=domain, y=list(result[generate_type].values()), mode='lines+markers', name=file))
+	if files:
+		for file in files:
+			try:
+				with open(file, 'r') as f:
+					result = json.load(f)
+			except FileNotFoundError as error:
+				is_error = True
+				print(f'{error}')
+			else:
+				domain = list(result[generate_type].keys())
+				figure.add_trace(go.Scatter(
+					x=domain, y=list(result[generate_type].values()), mode='lines+markers', name=file
+				))
+	else:
+		is_error = True
+		print('Empty list of files')
 
 	if not is_error:
 		figure.show()
 
 
+def make_list_of_files(path: str) -> List:
+	result = []
+	for root, dirs, files in os.walk(path, topdown=True):
+		for name in files:
+			result.append(os.path.join(root, name))
+	return result
+
+
 if __name__ == '__main__':
 	# show_algorithm_complexities('BubbleSort_100.json')
 
-	show_algorithm_complexities_2([str(BASE) + '/BubbleSort_100.json', str(BASE) + '/InsertSort_100.json'], REVERSED)
+	# list_of_files = make_list_of_files(str(BASE))
+	list_of_files = []
+
+	print(list_of_files)
+	show_algorithm_complexities_2(list_of_files, RANDOM)
