@@ -67,8 +67,7 @@ def make_list_of_files(path: str) -> List:
 if __name__ == '__main__':
 	# show_algorithm_complexities('BubbleSort_100.json')
 
-	# list_of_files = make_list_of_files(str(BASE))
-	list_of_files = []
+	list_of_files = make_list_of_files(str(BASE))
 
 	print(list_of_files)
 	show_algorithm_complexities_2(list_of_files, RANDOM)
