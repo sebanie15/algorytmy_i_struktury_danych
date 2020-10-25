@@ -1,6 +1,7 @@
 
 from typing import Any, List
 from random import randint
+from tqdm import tqdm
 
 def bubble_sort(list_to_sort: List[Any]) -> None:
 	n = len(list_to_sort)

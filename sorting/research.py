@@ -1,11 +1,15 @@
 import pathlib
 from abc import ABC, abstractmethod
 import json
-from typing import Dict
+import sys
+from random import randint
+from typing import Dict, List, Any
+
+from tqdm import tqdm
 
 from sorting.bubble_sort import generate_order_list, generate_reversed_list, generate_random_list
 
-
+sys.setrecursionlimit(1500)
 ORDERED = 'ordered'
 RANDOM = 'random'
 REVERSED = 'reversed'
@@ -81,6 +85,33 @@ class InsertSort(SortingAlgorithm):
 			values[j + 1] = value
 
 
+class QuickSort(SortingAlgorithm):
+
+	def partition(self, values: List[int], left: int, right: int) -> int:
+		pivot_index = randint(left, right)
+		values[right], values[pivot_index] = values[pivot_index], values[right]
+		pivot = values[right]
+		j = left - 1
+
+		for i in range(left, right):
+			if self.lt(values[i], pivot):
+				j += 1
+				values[i], values[j] = values[j], values[i]
+		j += 1
+		values[j], values[right] = values[right], values[j]
+		return j
+
+	def sort(self, values: List[Any]) -> None:
+		self.comparisons = 0
+		def _quick_sort(left: int, right: int) -> None:
+			if self.lt(left, right):
+				index = self.partition(values, left, right)
+				_quick_sort(left, index - 1)
+				_quick_sort(index + 1, right)
+
+		_quick_sort(0, len(values) - 1)
+
+
 def simulate(algorithm: SortingAlgorithm, max_length: int) -> None:
 	"""
 	The method allows to simulate the sorting of lists with the given maximum length.
@@ -98,7 +129,7 @@ def simulate(algorithm: SortingAlgorithm, max_length: int) -> None:
 		RANDOM: {}
 	}
 
-	for length in range(1, max_length+1):
+	for length in tqdm(range(1, max_length+1)):
 
 		ordered_list = generate_order_list(length)
 		reversed_list = generate_reversed_list(length)
@@ -124,10 +155,11 @@ def save_dict_to_json(filename: str, dict: Dict) -> None:
 
 
 if __name__ == '__main__':
-	length = 10
+	length = 5000
 
 	simulate(BubbleSort(), length)
 	simulate(InsertSort(), length)
+	simulate(QuickSort(), length)
 
 
 
