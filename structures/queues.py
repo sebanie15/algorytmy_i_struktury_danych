@@ -7,7 +7,7 @@ from typing import Generic, Optional
 from structures.own_types import T
 
 
-class AbstarctQueue(ABC, Generic[T]):
+class AbstractQueue(ABC, Generic[T]):
 	@abstractmethod
 	def push(self, element: T) -> None:
 		pass
@@ -16,17 +16,20 @@ class AbstarctQueue(ABC, Generic[T]):
 	def pop(self) -> T:
 		pass
 
-class Stack(AbstarctQueue[T]):
+	@abstractmethod
+	def front(self) -> T:
+		pass
 
+
+class Stack(AbstractQueue[T]):
 	class EmptyStackError(Exception):
 		def __init__(self) -> None:
-			super().__init__('You can not pop from empty Stack')
+			super().__init__('You can not pop from empty Stack.')
 
 	@dataclass
 	class Node(Generic[T]):
 		value: T
-		next: Optional[Stack.Node[T]]
-
+		next: Optional[Stack.Node[T]] = None
 
 	def __init__(self):
 		self.top = None
@@ -44,7 +47,6 @@ class Stack(AbstarctQueue[T]):
 		if self.top is not None:
 			value = self.top.value
 			self.top = self.top.next
-
 			return value
 		else:
 			raise Stack.EmptyStackError()
@@ -56,8 +58,55 @@ class Stack(AbstarctQueue[T]):
 			raise Stack.EmptyStackError()
 
 	def __bool__(self):
-		if self.top is not None:
-			return True
-		return False
+		return self.top is not None
 
-		# return self.top isinstance() not None
+
+class FifoQueue(AbstractQueue[T]):
+	class EmptyFifoQueueError(Exception):
+		def __init__(self) -> None:
+			super().__init__('You can not pop from empty FifoQueue')
+
+	@dataclass
+	class Node(Generic[T]):
+		value: T
+		next: Optional[FifoQueue.Node[T]] = None
+
+	def __init__(self):
+		self.head = None
+		self.end = None
+
+	def push(self, element: T) -> None:
+		node = FifoQueue.Node[T](element)
+
+		if self.head is None:
+			self.head = node
+			self.end = node
+		else:
+			self.end.next = node
+			self.end = self.end.next
+
+	def pop(self) -> T:
+		if self.head:
+			value = self.head.value
+			self.head = self.head.next
+
+			return value
+		else:
+			raise FifoQueue.EmptyFifoQueueError()
+
+	def front(self) -> T:
+		if self.head:
+			value = self.head.value
+			return value
+		else:
+			raise FifoQueue.EmptyFifoQueueError()
+
+
+if __name__ == '__main__':
+	my_qeueu = FifoQueue()
+
+	my_qeueu.push(1)
+	my_qeueu.push(2)
+	print(my_qeueu)
+	print(my_qeueu.pop())
+	print(my_qeueu.front())
