@@ -155,10 +155,10 @@ def save_dict_to_json(filename: str, dict: Dict) -> None:
 
 
 if __name__ == '__main__':
-	length = 5000
+	length = 500
 
-	simulate(BubbleSort(), length)
-	simulate(InsertSort(), length)
+	#simulate(BubbleSort(), length)
+	#simulate(InsertSort(), length)
 	simulate(QuickSort(), length)
 
 
